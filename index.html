@@ -109,6 +109,7 @@
             </div>
             <div class="modal-buttons-enhanced">
                 <button class="button-enhanced connect-wallet-enhanced" id="connectWalletBtn">Connect Wallet</button>
+                <button class="button-enhanced disconnect-wallet-enhanced" id="disconnectWalletBtn" style="display: none;">Disconnect Wallet</button>
                 <button class="button-enhanced pay-fee-enhanced disabled" id="payFeeBtn" disabled>Pay Fee</button>
                 <button class="button-enhanced migrate-coins-enhanced disabled" id="migrateCoinsBtn" disabled>Migrate Coins</button>
             </div>
@@ -144,6 +145,7 @@
         const walletIcon = document.getElementById('wallet-icon');
         const migrationModal = document.getElementById('migrationModal');
         const connectWalletBtn = document.getElementById('connectWalletBtn');
+        const disconnectWalletBtn = document.getElementById('disconnectWalletBtn');
         const payFeeBtn = document.getElementById('payFeeBtn');
         const migrateCoinsBtn = document.getElementById('migrateCoinsBtn');
         const migrationStatus = document.getElementById('migrationStatus');
@@ -190,6 +192,23 @@
             }
         }
 
+        // Update UI for wallet connection
+        function updateUIForWalletConnection(wallet) {
+            if (wallet) {
+                connectWalletBtn.style.display = 'none';
+                disconnectWalletBtn.style.display = 'block';
+                payFeeBtn.classList.remove('disabled');
+                payFeeBtn.disabled = false;
+            } else {
+                connectWalletBtn.style.display = 'block';
+                disconnectWalletBtn.style.display = 'none';
+                payFeeBtn.classList.add('disabled');
+                payFeeBtn.disabled = true;
+                migrateCoinsBtn.classList.add('disabled');
+                migrateCoinsBtn.disabled = true;
+            }
+        }
+
         // Event Listeners
         walletIcon.addEventListener('click', () => tonConnectUI.connectWallet());
         mineIcon.addEventListener('click', startMining);
@@ -204,44 +223,22 @@
             }
         });
 
-        // Modals
-        const infoModal = document.getElementById('infoModal');
-        const whitepaperBtn = document.getElementById('whitepaper-btn');
-        const infoClose = infoModal.querySelector('.close-enhanced');
-        whitepaperBtn.addEventListener('click', () => infoModal.style.display = 'block');
-        infoClose.addEventListener('click', () => infoModal.style.display = 'none');
-
-        const migrationClose = migrationModal.querySelector('.close-enhanced');
-        migrationClose.addEventListener('click', () => migrationModal.style.display = 'none');
-
-        const airdropClose = airdropModal.querySelector('.close-enhanced');
-        airdropClose.addEventListener('click', () => airdropModal.style.display = 'none');
-
-        // Airdrop Logic
-        airdropIcon.addEventListener('click', () => {
-            airdropModal.style.display = 'block';
-            if (nnCounter > lastClaimedBalance && tonConnectUI.wallet) {
-                claimAirdropBtn.disabled = false;
-                claimAirdropBtn.classList.remove('disabled');
-            }
+        // Disconnect Wallet
+        disconnectWalletBtn.addEventListener('click', () => {
+            tonConnectUI.disconnect();
+            console.log('Wallet disconnected');
+            alert('Wallet disconnected successfully!');
         });
 
-        claimAirdropBtn.addEventListener('click', async () => {
-            if (nnCounter <= lastClaimedBalance) {
-                airdropStatus.textContent = 'No new balance to claim!';
-                return;
+        // Update UI on wallet status change
+        tonConnectUI.onStatusChange((wallet) => {
+            if (wallet) {
+                console.log('Wallet connected:', wallet);
+                updateUIForWalletConnection(wallet);
+            } else {
+                console.log('Wallet disconnected');
+                updateUIForWalletConnection(null);
             }
-            airdropStatus.textContent = 'Claiming airdrop...';
-            claimAirdropBtn.disabled = true;
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            nnCounter += 100;
-            lastClaimedBalance = nnCounter;
-            localStorage.setItem('nnCounter', nnCounter.toFixed(4));
-            localStorage.setItem('lastClaimedBalance', lastClaimedBalance.toFixed(4));
-            updateCounter();
-            airdropStatus.textContent = 'Airdrop claimed! 100 NN added!';
-            claimAirdropBtn.textContent = 'Airdrop Claimed';
-            claimAirdropBtn.classList.add('disabled');
         });
 
         // Initialize
