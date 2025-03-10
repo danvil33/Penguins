@@ -20,14 +20,6 @@ body {
     padding: 20px;
     margin-right: 100px;
 }
-.disconnect-wallet-enhanced {
-    background: linear-gradient(45deg, #ff4444, #ff6666);
-    color: #ffffff;
-}
-
-.disconnect-wallet-enhanced:hover {
-    background: linear-gradient(45deg, #cc0000, #ff4444);
-}
 
 /* NN Counter */
 #nn-counter {
