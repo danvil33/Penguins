@@ -19,7 +19,13 @@
             <li>Settings</li>
         </ul>
     </div>
-
+<!-- Inside the modal-buttons-enhanced div -->
+<div class="modal-buttons-enhanced">
+    <button class="button-enhanced connect-wallet-enhanced" id="connectWalletBtn">Connect Wallet</button>
+    <button class="button-enhanced disconnect-wallet-enhanced" id="disconnectWalletBtn" style="display: none;">Disconnect Wallet</button>
+    <button class="button-enhanced pay-fee-enhanced disabled" id="payFeeBtn" disabled>Pay Fee</button>
+    <button class="button-enhanced migrate-coins-enhanced disabled" id="migrateCoinsBtn" disabled>Migrate Coins</button>
+</div>
     <!-- NN Counter -->
     <div id="nn-counter">0.0000 nn</div>
 
@@ -135,6 +141,45 @@
     </div>
 
     <script>
+        // Disconnect Wallet Button
+const disconnectWalletBtn = document.getElementById('disconnectWalletBtn');
+
+// Function to update UI based on wallet connection status
+function updateUIForWalletConnection(wallet) {
+    if (wallet) {
+        // Wallet is connected
+        connectWalletBtn.style.display = 'none';
+        disconnectWalletBtn.style.display = 'block';
+        payFeeBtn.classList.remove('disabled');
+        payFeeBtn.disabled = false;
+    } else {
+        // Wallet is disconnected
+        connectWalletBtn.style.display = 'block';
+        disconnectWalletBtn.style.display = 'none';
+        payFeeBtn.classList.add('disabled');
+        payFeeBtn.disabled = true;
+        migrateCoinsBtn.classList.add('disabled');
+        migrateCoinsBtn.disabled = true;
+    }
+}
+
+// Event listener for disconnect button
+disconnectWalletBtn.addEventListener('click', () => {
+    tonConnectUI.disconnect();
+    console.log('Wallet disconnected');
+    alert('Wallet disconnected successfully!');
+});
+
+// Update UI when wallet status changes
+tonConnectUI.onStatusChange((wallet) => {
+    if (wallet) {
+        console.log('Wallet connected:', wallet);
+        updateUIForWalletConnection(wallet);
+    } else {
+        console.log('Wallet disconnected');
+        updateUIForWalletConnection(null);
+    }
+});
         // Initialize TON Connect
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://danvil33.github.io/Penguins/tonconnect-manifest.json',
