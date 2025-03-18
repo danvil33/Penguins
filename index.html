@@ -8,24 +8,187 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        .wallet-status {
-            padding: 10px;
-            margin: 10px 0;
+        /* Original Inline Styles */
+        .ceo-image {
             text-align: center;
+            margin: 20px 0;
         }
 
-        #disconnectWalletBtn {
+        .ceo-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer Styles */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #1e2a44 0%, #2a3b66 100%);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .footer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #ffffff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .footer-item:hover {
+            color: #00ff88;
+        }
+
+        .footer-item i {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        /* Wallet Modal Styles */
+        .wallet-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .wallet-modal-content {
+            background: linear-gradient(135deg, #1e2a44 0%, #2a3b66 100%);
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            color: #ffffff;
+            position: relative;
+        }
+
+        /* Tasks Modal Styles */
+        .tasks-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .tasks-modal-content {
+            background: linear-gradient(135deg, #1e2a44 0%, #2a3b66 100%);
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 450px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            color: #ffffff;
+            position: relative;
+        }
+
+        .tasks-modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .tasks-modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #00ff88;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .task-item span {
+            flex-grow: 1;
             margin-left: 10px;
-            padding: 5px 10px;
-            background-color: #ff4444;
-            color: white;
+        }
+
+        .task-button {
+            background-color: #00ff88;
+            color: #1e2a44;
             border: none;
+            padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        #disconnectWalletBtn:hover {
-            background-color: #cc0000;
+        .task-button.completed {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+
+        .task-button:hover:not(.completed) {
+            background-color: #00cc6d;
+        }
+
+        .tasks-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .tasks-close:hover {
+            color: #00ff88;
+        }
+
+        /* Mining Arrow Animation */
+        .mining-arrow {
+            display: none;
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ff88;
+            font-size: 1.2rem;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .feature {
+            position: relative;
+        }
+
+        #nn-counter {
+            color: #00ff88;
+            font-size: 1.5rem;
+            padding: 10px;
         }
     </style>
 </head>
@@ -34,18 +197,20 @@
     <div id="hamburger-menu">☰</div>
     <div id="dropdown-menu">
         <ul>
-            <li id="airdrop-menu-item">Airdrop</li>
+            <li id="migration-menu-item">Migration</li>
             <li>Mine</li>
             <li>Wallet</li>
-            <li>Settings</li>
+            <li>Setting</li>
         </ul>
     </div>
 
-    <!-- NN Counter -->
-    <div id="nn-counter">0.0000 nn</div>
+    <!-- PPXL Counter -->
+    <div id="nn-counter">0.0000 PPXL</div>
 
     <!-- CEO Announcement Section -->
-    <div class="ceo-image" id="ceo-announcement-image"></div>
+    <div class="ceo-image" id="ceo-announcement-image">
+        <img src="https://raw.githubusercontent.com/danvil33/Penguins/refs/heads/main/icon.png" alt="CEO Image">
+    </div>
 
     <!-- Social Buttons -->
     <div class="social-buttons">
@@ -64,19 +229,11 @@
             <div class="ceo-announcement">
                 <div class="ceo-text">
                     <h2>CEO Announcement</h2>
-                    <p id="ceo-announcement-text"></p>
+                    <p id="ceo-announcement-text"> hello!
+                    🐧 Penguin Pixel – Revolutionizing crypto with speed, security, and innovation! ⚡🔗 Built for the future, it ensures seamless transactions and reliable access to digital assets for everyone. 🚀💎 #CryptoRedefined
+
+ the uniqueness here is you mine and you get automatic migration</p>
                 </div>
-            </div>
-            <div class="card-buttons">
-                <a href="#" id="whitepaper-btn">
-                    <i class="fas fa-file-alt"></i> White Paper
-                </a>
-            </div>
-        </div>
-        <div class="card">
-            <div class="wallet-status" id="walletStatus">
-                <span id="walletInfo">Wallet not connected</span>
-                <button id="disconnectWalletBtn" style="display: none;">Disconnect Wallet</button>
             </div>
         </div>
     </div>
@@ -87,9 +244,9 @@
             <i class="fas fa-user-friends"></i>
             <span>Friends</span>
         </div>
-        <div class="feature" id="airdrop-icon">
-            <i class="fas fa-gift"></i>
-            <span>Airdrop</span>
+        <div class="feature" id="migration-icon">
+            <i class="fas fa-share-alt"></i>
+            <span>0.0</span>
         </div>
         <div class="feature" id="wallet-icon">
             <i class="fas fa-wallet"></i>
@@ -98,66 +255,98 @@
         <div class="feature mining-icon" id="mine-icon">
             <i class="fas fa-hammer"></i>
             <span id="mine-text">Mine</span>
-            <span id="mining-rate" style="color: #00ff88; display: none;">2 nn/h</span>
+            <span id="mining-rate" style="color: #00ff88; display: none;">0.5/h</span>
+            <span class="mining-arrow" id="mining-arrow">⬆️</span>
         </div>
-        <div class="feature" id="telegram-icon">
-            <i class="fab fa-telegram-plane"></i>
-            <span>Telegram</span>
+        <div class="feature" id="youtube-icon">
+            <i class="fab fa-youtube"></i>
+            <span>YouTube</span>
         </div>
-        <div class="feature" id="migration-icon">
-            <i class="fas fa-share-alt"></i>
-            <span>Migration</span>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-item" id="home">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="footer-item" id="tasks">
+            <i class="fas fa-tasks"></i>
+            <span>Tasks</span>
+        </div>
+        <div class="footer-item" id="profile">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </div>
+        <div class="footer-item" id="wallet">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </div>
     </div>
 
     <!-- Modals -->
-    <div id="infoModal" class="modal">
-        <div class="modal-content-enhanced">
-            <span class="close-enhanced">×</span>
-            <div class="modal-header-enhanced">
-                <h2>White Paper Info</h2>
-            </div>
-            <div class="modal-info-enhanced">
-                <p>We are working on the white paper. It's your time to explore, and it's our work to make you enjoy the project. Thank you!</p>
-            </div>
-        </div>
-    </div>
-
     <div id="migrationModal" class="modal">
         <div class="modal-content-enhanced">
             <span class="close-enhanced">×</span>
             <div class="modal-header-enhanced">
-                <h2>Migrate NN</h2>
+                <h2>PPXL Migration</h2>
             </div>
             <div class="modal-info-enhanced">
-                <p>Balance: <span class="highlight-enhanced" id="current-balance">0.0000 nn</span></p>
-                <p>Fee: <span class="highlight-enhanced">2 USDT</span></p>
-                <p class="address-enhanced">To: <span class="highlight-enhanced">UQABi--VPQ0JPUjVMXXYWEAxWsFpRfJGL-EKi7zH3UFdFsyz</span></p>
+                <p>Available: <span class="highlight-enhanced" id="migration-amount">100 PPXL</span></p>
+                <p>Requirement: <span class="highlight-enhanced">Connected TON Wallet</span></p>
+                <p>Status: <span class="highlight-enhanced" id="migration-status">Not Migrated</span></p>
             </div>
             <div class="modal-buttons-enhanced">
-                <button class="button-enhanced connect-wallet-enhanced" id="connectWalletBtn">Connect Wallet</button>
-                <button class="button-enhanced pay-fee-enhanced disabled" id="payFeeBtn" disabled>Pay Fee</button>
-                <button class="button-enhanced migrate-coins-enhanced disabled" id="migrateCoinsBtn" disabled>Migrate Coins</button>
+                <button class="button-enhanced migrate-coins-enhanced" id="migrateCoinsBtn">Migrate Coins</button>
             </div>
             <div class="modal-status-enhanced" id="migrationStatus"></div>
         </div>
     </div>
 
-    <div id="airdropModal" class="modal">
-        <div class="modal-content-enhanced">
-            <span class="close-enhanced">×</span>
-            <div class="modal-header-enhanced">
-                <h2>NN Airdrop</h2>
+    <!-- Wallet Modal -->
+    <div id="walletModal" class="wallet-modal">
+        <div class="wallet-modal-content">
+            <button class="wallet-close">×</button>
+            <div class="wallet-modal-header">
+                <h2>Wallet Status</h2>
             </div>
-            <div class="modal-info-enhanced">
-                <p>Available: <span class="highlight-enhanced" id="airdrop-amount">100 NN</span></p>
-                <p>Requirement: <span class="highlight-enhanced">Connected TON Wallet</span></p>
-                <p>Status: <span class="highlight-enhanced" id="airdrop-status">Not Claimed</span></p>
+            <div class="wallet-status-info" id="walletStatusInfo">
+                <p>Status: <span id="connectionStatus">Not Connected</span></p>
+                <p>Address: <span id="walletAddress" class="wallet-address">None</span></p>
             </div>
-            <div class="modal-buttons-enhanced">
-                <button class="button-enhanced claim-airdrop-enhanced" id="claimAirdropBtn">Claim Airdrop</button>
+            <button class="connect-button" id="connectWalletBtn">Connect Wallet</button>
+            <button class="disconnect-button" id="disconnectWalletBtn" style="display: none;">Disconnect Wallet</button>
+        </div>
+    </div>
+
+    <!-- Tasks Modal -->
+    <div id="tasksModal" class="tasks-modal">
+        <div class="tasks-modal-content">
+            <button class="tasks-close">×</button>
+            <div class="tasks-modal-header">
+                <h2>Tasks</h2>
             </div>
-            <div class="modal-status-enhanced" id="airdropStatus"></div>
+            <div class="tasks-list">
+                <div class="task-item">
+                    <i class="fab fa-youtube"></i>
+                    <span>Follow us on YouTube</span>
+                    <button class="task-button" id="youtubeTaskBtn">Follow (5 PPXL)</button>
+                </div>
+                <div class="task-item">
+                    <i class="fab fa-twitter"></i>
+                    <span>Follow us on X</span>
+                    <button class="task-button" id="xTaskBtn">Follow (5 PPXL)</button>
+                </div>
+             
+                
+                
+                
+                <div class="task-item">
+                    <i class="fab fa-telegram-plane"></i>
+                    <span>Join us on Telegram</span>
+                    <button class="task-button" id="telegramTaskBtn">Join (5 PPXL)</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -169,70 +358,146 @@
 
         // DOM Elements
         const walletIcon = document.getElementById('wallet-icon');
+        const migrationIcon = document.getElementById('migration-icon');
         const migrationModal = document.getElementById('migrationModal');
-        const connectWalletBtn = document.getElementById('connectWalletBtn');
-        const payFeeBtn = document.getElementById('payFeeBtn');
         const migrateCoinsBtn = document.getElementById('migrateCoinsBtn');
         const migrationStatus = document.getElementById('migrationStatus');
-        const airdropIcon = document.getElementById('airdrop-icon');
-        const airdropModal = document.getElementById('airdropModal');
-        const claimAirdropBtn = document.getElementById('claimAirdropBtn');
-        const airdropStatus = document.getElementById('airdropStatus');
         const nnCounterDisplay = document.getElementById('nn-counter');
         const mineIcon = document.getElementById('mine-icon');
+        const mineText = document.getElementById('mine-text');
         const miningRate = document.getElementById('mining-rate');
-        const telegramIcon = document.getElementById('telegram-icon');
+        const miningArrow = document.getElementById('mining-arrow');
+        const youtubeIcon = document.getElementById('youtube-icon');
+        const walletModal = document.getElementById('walletModal');
+        const walletClose = walletModal.querySelector('.wallet-close');
+        const connectWalletBtn = document.getElementById('connectWalletBtn');
         const disconnectWalletBtn = document.getElementById('disconnectWalletBtn');
-        const walletInfo = document.getElementById('walletInfo');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const walletAddress = document.getElementById('walletAddress');
+        const homeFooter = document.getElementById('home');
+        const tasksFooter = document.getElementById('tasks');
+        const profileFooter = document.getElementById('profile');
+        const walletFooter = document.getElementById('wallet');
+        const tasksModal = document.getElementById('tasksModal');
+        const tasksClose = tasksModal.querySelector('.tasks-close');
+        const youtubeTaskBtn = document.getElementById('youtubeTaskBtn');
+        const xTaskBtn = document.getElementById('xTaskBtn');
+        const telegramTaskBtn = document.getElementById('telegramTaskBtn');
 
         // State Variables
         let nnCounter = parseFloat(localStorage.getItem('nnCounter')) || 0;
         let startTime = parseFloat(localStorage.getItem('startTime')) || null;
-        let isFeePaid = false;
-        let lastClaimedBalance = parseFloat(localStorage.getItem('lastClaimedBalance')) || 0;
-        let telegramRewardClaimed = localStorage.getItem('telegramRewardClaimed') === 'true';
+        let lastMigratedBalance = parseFloat(localStorage.getItem('lastMigratedBalance')) || 0;
+        let miningInterval = null;
+        let miningEndTime = null;
+        let tasksCompleted = JSON.parse(localStorage.getItem('tasksCompleted')) || {
+            youtube: false,
+            x: false,
+            telegram: false
+        };
 
-        // Mining Rate
-        const rate = 2 / 3600; // 2 nn per hour
-
-        // Update wallet status display
-        function updateWalletStatus() {
-            if (tonConnectUI.wallet) {
-                walletInfo.textContent = `Connected: ${tonConnectUI.wallet.account.address.slice(0, 6)}...${tonConnectUI.wallet.account.address.slice(-4)}`;
-                disconnectWalletBtn.style.display = 'block';
-                connectWalletBtn.textContent = 'Wallet Connected';
-                connectWalletBtn.disabled = true;
-                connectWalletBtn.classList.add('disabled');
-            } else {
-                walletInfo.textContent = 'Wallet not connected';
-                disconnectWalletBtn.style.display = 'none';
-                connectWalletBtn.textContent = 'Connect Wallet';
-                connectWalletBtn.disabled = false;
-                connectWalletBtn.classList.remove('disabled');
-            }
-        }
+        // Mining Rate (0.5 PPXL per hour converted to per second)
+        const rate = 0.5 / 3600; // 0.5 PPXL per hour in seconds
 
         // Update Counter
         function updateCounter() {
             if (startTime) {
-                const elapsedTime = (Date.now() - startTime) / 1000;
-                nnCounter += elapsedTime * rate;
+                const currentTime = Date.now();
+                const elapsedTime = (currentTime - startTime) / 1000; // Convert to seconds
+                const newCounter = parseFloat(localStorage.getItem('nnCounter')) || 0;
+                nnCounter = newCounter + (elapsedTime * rate);
                 localStorage.setItem('nnCounter', nnCounter.toFixed(4));
-                startTime = Date.now();
+                nnCounterDisplay.textContent = nnCounter.toFixed(4) + ' PPXL';
+                startTime = currentTime; // Update startTime to current time
                 localStorage.setItem('startTime', startTime);
+            } else {
+                nnCounterDisplay.textContent = nnCounter.toFixed(4) + ' PPXL';
             }
-            nnCounterDisplay.textContent = nnCounter.toFixed(4) + ' nn';
-            document.getElementById('current-balance').textContent = nnCounter.toFixed(4) + ' nn';
         }
 
         // Start Mining
         function startMining() {
             if (!startTime) {
                 startTime = Date.now();
+                miningEndTime = startTime + 12 * 60 * 60 * 1000; // 12 hours from now
                 localStorage.setItem('startTime', startTime);
-                setInterval(updateCounter, 1000);
-                mineIcon.querySelector('#mine-text').style.display = 'none';
+                localStorage.setItem('miningEndTime', miningEndTime);
+                mineText.style.display = 'none';
                 miningRate.style.display = 'inline';
+                miningArrow.style.display = 'none';
+                // Start the counter update interval
+                if (miningInterval) clearInterval(miningInterval);
+                miningInterval = setInterval(updateCounter, 1000); // Update every second
+            }
+        }
+
+        // Stop Mining after 12 hours
+        function stopMining() {
+            if (miningEndTime && Date.now() >= miningEndTime) {
+                clearInterval(miningInterval);
+                startTime = null;
+                miningEndTime = null;
+                localStorage.removeItem('startTime');
+                localStorage.removeItem('miningEndTime');
+                mineText.style.display = 'inline';
+                miningRate.style.display = 'none';
+                miningArrow.style.display = 'block';
+                updateCounter(); // Final update
+                miningInterval = null;
+            }
+        }
+
+        // Show blinking arrow initially if not mining
+        if (!startTime) {
+            miningArrow.style.display = 'block';
+        } else {
+            mineText.style.display = 'none';
+            miningRate.style.display = 'inline';
+        }
+
+        // Update wallet modal display
+        function updateWalletModal() {
+            if (tonConnectUI.wallet) {
+                connectionStatus.textContent = 'Connected';
+                walletAddress.textContent = tonConnectUI.wallet.account.address;
+                connectWalletBtn.style.display = 'none';
+                disconnectWalletBtn.style.display = 'block';
+            } else {
+                connectionStatus.textContent = 'Not Connected';
+                walletAddress.textContent = 'None';
+                connectWalletBtn.style.display = 'block';
+                disconnectWalletBtn.style.display = 'none';
+            }
+        }
+
+        // Update task button states
+        function updateTaskButtons() {
+            if (tasksCompleted.youtube) {
+                youtubeTaskBtn.textContent = 'Completed';
+                youtubeTaskBtn.classList.add('completed');
+                youtubeTaskBtn.disabled = true;
+            }
+            if (tasksCompleted.x) {
+                xTaskBtn.textContent = 'Completed';
+                xTaskBtn.classList.add('completed');
+                xTaskBtn.disabled = true;
+            }
+            if (tasksCompleted.telegram) {
+                telegramTaskBtn.textContent = 'Completed';
+                telegramTaskBtn.classList.add('completed');
+                telegramTaskBtn.disabled = true;
+            }
+        }
+
+        // Reward function
+        function rewardUser(task) {
+            if (!tasksCompleted[task]) {
+                nnCounter += 5;
+                tasksCompleted[task] = true;
+                localStorage.setItem('nnCounter', nnCounter.toFixed(4));
+                localStorage.setItem('tasksCompleted', JSON.stringify(tasksCompleted));
+                updateCounter();
+                updateTaskButtons();
             }
         }
 
@@ -240,84 +505,134 @@
         walletIcon.addEventListener('click', async () => {
             if (!tonConnectUI.wallet) {
                 await tonConnectUI.connectWallet();
-                updateWalletStatus();
+                updateWalletModal();
             }
         });
 
+        mineIcon.addEventListener('click', startMining);
+
+        youtubeIcon.addEventListener('click', () => {
+            window.open('https://www.youtube.com/@penguin_pixel', '_blank');
+        });
+
+        // Migration Modal
+        const migrationClose = migrationModal.querySelector('.close-enhanced');
+        migrationClose.addEventListener('click', () => migrationModal.style.display = 'none');
+
+        migrationIcon.addEventListener('click', () => {
+            migrationModal.style.display = 'block';
+            if (nnCounter > lastMigratedBalance && tonConnectUI.wallet) {
+                migrateCoinsBtn.disabled = false;
+                migrateCoinsBtn.classList.remove('disabled');
+            }
+        });
+
+        migrateCoinsBtn.addEventListener('click', async () => {
+            if (nnCounter <= lastMigratedBalance) {
+                migrationStatus.textContent = 'No new balance to migrate!';
+                return;
+            }
+            migrationStatus.textContent = 'Migrating coins...';
+            migrateCoinsBtn.disabled = true;
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            nnCounter += 100;
+            lastMigratedBalance = nnCounter;
+            localStorage.setItem('nnCounter', nnCounter.toFixed(4));
+            localStorage.setItem('lastMigratedBalance', lastMigratedBalance.toFixed(4));
+            updateCounter();
+            migrationStatus.textContent = 'Coins migrated! 100 PPXL added!';
+            migrateCoinsBtn.textContent = 'Coins Migrated';
+            migrateCoinsBtn.classList.add('disabled');
+        });
+
+        // Footer Navigation
+        homeFooter.addEventListener('click', () => {
+            migrationModal.style.display = 'none';
+            walletModal.style.display = 'none';
+            tasksModal.style.display = 'none';
+            window.scrollTo(0, 0);
+        });
+
+        tasksFooter.addEventListener('click', () => {
+            tasksModal.style.display = 'block';
+            updateTaskButtons();
+        });
+
+        profileFooter.addEventListener('click', () => {
+            alert('Navigating to Profile');
+        });
+
+        walletFooter.addEventListener('click', () => {
+            walletModal.style.display = 'block';
+            updateWalletModal();
+        });
+
+        // Wallet Modal Events
+        walletClose.addEventListener('click', () => {
+            walletModal.style.display = 'none';
+        });
+
         connectWalletBtn.addEventListener('click', async () => {
-            if (!tonConnectUI.wallet) {
+            try {
                 await tonConnectUI.connectWallet();
-                updateWalletStatus();
+                updateWalletModal();
+            } catch (error) {
+                console.error('Wallet connection failed:', error);
+                connectionStatus.textContent = 'Connection Failed';
             }
         });
 
         disconnectWalletBtn.addEventListener('click', async () => {
-            await tonConnectUI.disconnect();
-            updateWalletStatus();
-            claimAirdropBtn.disabled = true;
-            claimAirdropBtn.classList.add('disabled');
-        });
-
-        mineIcon.addEventListener('click', startMining);
-        telegramIcon.addEventListener('click', () => {
-            if (!telegramRewardClaimed) {
-                window.open('https://t.me/numbernetwork_community', '_blank');
-                nnCounter += 50;
-                localStorage.setItem('nnCounter', nnCounter.toFixed(4));
-                localStorage.setItem('telegramRewardClaimed', 'true');
-                telegramRewardClaimed = true;
-                updateCounter();
+            try {
+                await tonConnectUI.disconnect();
+                updateWalletModal();
+            } catch (error) {
+                console.error('Wallet disconnection failed:', error);
+                connectionStatus.textContent = 'Disconnection Failed';
             }
         });
 
-        // TON Connect event listeners
-        tonConnectUI.onStatusChange(wallet => {
-            updateWalletStatus();
-        });
-
-        // Modals
-        const infoModal = document.getElementById('infoModal');
-        const whitepaperBtn = document.getElementById('whitepaper-btn');
-        const infoClose = infoModal.querySelector('.close-enhanced');
-        whitepaperBtn.addEventListener('click', () => infoModal.style.display = 'block');
-        infoClose.addEventListener('click', () => infoModal.style.display = 'none');
-
-        const migrationClose = migrationModal.querySelector('.close-enhanced');
-        migrationClose.addEventListener('click', () => migrationModal.style.display = 'none');
-
-        const airdropClose = airdropModal.querySelector('.close-enhanced');
-        airdropClose.addEventListener('click', () => airdropModal.style.display = 'none');
-
-        // Airdrop Logic
-        airdropIcon.addEventListener('click', () => {
-            airdropModal.style.display = 'block';
-            if (nnCounter > lastClaimedBalance && tonConnectUI.wallet) {
-                claimAirdropBtn.disabled = false;
-                claimAirdropBtn.classList.remove('disabled');
+        window.addEventListener('click', (event) => {
+            if (event.target === walletModal) {
+                walletModal.style.display = 'none';
+            }
+            if (event.target === tasksModal) {
+                tasksModal.style.display = 'none';
             }
         });
 
-        claimAirdropBtn.addEventListener('click', async () => {
-            if (nnCounter <= lastClaimedBalance) {
-                airdropStatus.textContent = 'No new balance to claim!';
-                return;
+        // Tasks Modal Events
+        tasksClose.addEventListener('click', () => {
+            tasksModal.style.display = 'none';
+        });
+
+        youtubeTaskBtn.addEventListener('click', () => {
+            if (!tasksCompleted.youtube) {
+                window.open('https://www.youtube.com/@penguin_pixel', '_blank');
+                setTimeout(() => rewardUser('youtube'), 2000); // Reward after 2 seconds
             }
-            airdropStatus.textContent = 'Claiming airdrop...';
-            claimAirdropBtn.disabled = true;
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            nnCounter += 100;
-            lastClaimedBalance = nnCounter;
-            localStorage.setItem('nnCounter', nnCounter.toFixed(4));
-            localStorage.setItem('lastClaimedBalance', lastClaimedBalance.toFixed(4));
-            updateCounter();
-            airdropStatus.textContent = 'Airdrop claimed! 100 NN added!';
-            claimAirdropBtn.textContent = 'Airdrop Claimed';
-            claimAirdropBtn.classList.add('disabled');
+        });
+
+        xTaskBtn.addEventListener('click', () => {
+            if (!tasksCompleted.x) {
+                window.open('https://x.com/number_network', '_blank');
+                setTimeout(() => rewardUser('x'), 2000); // Reward after 2 seconds
+            }
+        });
+
+        telegramTaskBtn.addEventListener('click', () => {
+            if (!tasksCompleted.telegram) {
+                window.open('https://t.me/number_network', '_blank');
+                setTimeout(() => rewardUser('telegram'), 2000); // Reward after 2 seconds
+            }
         });
 
         // Initialize
         updateCounter();
-        updateWalletStatus();
+        setInterval(stopMining, 1000); // Check every second if mining should stop
+        if (startTime) {
+            miningInterval = setInterval(updateCounter, 1000);
+        }
     </script>
 </body>
 </html>
